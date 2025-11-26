@@ -1706,86 +1706,13 @@ function enforceElementSeparation() {
     }
   }
 
-  // 3. Check obstacle-to-character separation to prevent obstacles camping next to players
-  obstacles.forEach((obstacle) => {
-    // Skip special horizontal-moving crocodiles (they move across screen intentionally)
-    if (obstacle.dataset.special === "horizontal") return;
-
-    const obstacleCenterX = parseFloat(obstacle.style.left) + 30;
-    const obstacleCenterY = parseFloat(obstacle.style.top) + 30;
-
-    // Check distance to Player 1
-    const p1CenterX = parseFloat(player1.style.left) + 30;
-    const p1CenterY = parseFloat(player1.style.top) + 30;
-    const distanceToP1 = getDistance(
-      obstacleCenterX,
-      obstacleCenterY,
-      p1CenterX,
-      p1CenterY
-    );
-
-    // If obstacle is too close to player 1, push it away
-    if (distanceToP1 < BUFFER_DISTANCES.OBSTACLE_TO_CHARACTER) {
-      // Debug log removed for performance - was causing browser crashes
-
-      // Calculate push direction (away from player)
-      const angle = Math.atan2(
-        obstacleCenterY - p1CenterY,
-        obstacleCenterX - p1CenterX
-      );
-      const pushDistance =
-        BUFFER_DISTANCES.OBSTACLE_TO_CHARACTER - distanceToP1;
-
-      // Move obstacle away from player
-      const newX =
-        parseFloat(obstacle.style.left) + Math.cos(angle) * pushDistance;
-      const newY =
-        parseFloat(obstacle.style.top) + Math.sin(angle) * pushDistance;
-
-      // Keep within bounds
-      obstacle.style.left =
-        Math.max(0, Math.min(game.clientWidth - 60, newX)) + "px";
-      obstacle.style.top =
-        Math.max(0, Math.min(game.clientHeight - 60, newY)) + "px";
-    }
-
-    // Check distance to Player 2 (if in 2-player mode)
-    if (mode === 2) {
-      const p2CenterX = parseFloat(player2.style.left) + 30;
-      const p2CenterY = parseFloat(player2.style.top) + 30;
-      const distanceToP2 = getDistance(
-        obstacleCenterX,
-        obstacleCenterY,
-        p2CenterX,
-        p2CenterY
-      );
-
-      // If obstacle is too close to player 2, push it away
-      if (distanceToP2 < BUFFER_DISTANCES.OBSTACLE_TO_CHARACTER) {
-        // Debug log removed for performance - was causing browser crashes
-
-        // Calculate push direction (away from player)
-        const angle = Math.atan2(
-          obstacleCenterY - p2CenterY,
-          obstacleCenterX - p2CenterX
-        );
-        const pushDistance =
-          BUFFER_DISTANCES.OBSTACLE_TO_CHARACTER - distanceToP2;
-
-        // Move obstacle away from player
-        const newX =
-          parseFloat(obstacle.style.left) + Math.cos(angle) * pushDistance;
-        const newY =
-          parseFloat(obstacle.style.top) + Math.sin(angle) * pushDistance;
-
-        // Keep within bounds
-        obstacle.style.left =
-          Math.max(0, Math.min(game.clientWidth - 60, newX)) + "px";
-        obstacle.style.top =
-          Math.max(0, Math.min(game.clientHeight - 60, newY)) + "px";
-      }
-    }
-  });
+  // 3. DISABLED: Obstacle-to-character separation during gameplay
+  // This was causing obstacles to move away from players instead of colliding
+  // Separation is only enforced during initial spawning via isPositionSafe()
+  
+  // NOTE: The original code pushed obstacles away from players continuously,
+  // preventing proper collision detection. This has been removed to allow
+  // obstacles to properly hit players and reduce lives as intended.
 }
 
 // Check for treasure-obstacle collisions and relocate obstacles if needed
